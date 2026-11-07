@@ -4,11 +4,13 @@
 
 [![Release](https://img.shields.io/github/v/release/oficcejo/yike?label=release)](https://github.com/oficcejo/yike/releases)
 [![Android](https://img.shields.io/badge/Android-6.0%2B%20%7C%20API%2023-3DDC84)](https://developer.android.com/about/versions/marshmallow)
-[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 [![Offline first](https://img.shields.io/badge/divination-offline--first-orange)](#隐私与权限)
 [![No dependencies](https://img.shields.io/badge/deps-zero-lightgrey)](#从源码构建)
 
-**[下载最新 APK →](https://github.com/oficcejo/yike/releases/latest)** · [版本历史](#版本历史) · [常见问题](#常见问题-faq)
+**[下载最新 APK →](https://github.com/oficcejo/yike/releases/latest)** · [版本历史](#版本历史) · [常见问题](#常见问题-faq) · [联系](#license)
+
+Apache-2.0 授权 · Copyright © 2026 oficcejo · 联系：ws3101001@126.com
 
 ---
 
@@ -198,7 +200,8 @@ yike/
 │       ├── assets/www/      # web/ 的同步副本
 │       └── res/
 ├── tools/                   # 构建、数据生成、资源同步、回归测试
-├── LICENSE                  # MIT
+├── LICENSE                  # Apache License 2.0 全文
+├── NOTICE                   # 版权归属、联系邮箱与来源声明
 └── README.md
 ```
 
@@ -279,6 +282,17 @@ v1.0.0 的已知问题，请升级到 v1.1.0。若新版仍出现，说明服务
 
 ## License
 
-[MIT](LICENSE) © 2026 oficcejo
+本项目采用 [Apache License 2.0](LICENSE) 授权，Copyright © 2026 oficcejo。版权归属、联系邮箱与第三方来源声明见 [NOTICE](NOTICE)。
+
+相较 MIT，Apache-2.0 额外提供**明确的专利授权**，并对再分发提出以下要求：
+
+| 义务 | 说明 |
+| --- | --- |
+| 保留声明 | 分发源码或二进制时必须随附 `LICENSE` 与 `NOTICE` |
+| 标注修改 | 被修改过的文件须带有显著的变更说明 |
+| 商标 | 不授予项目名称、标识的商标使用权，不得用于背书宣传 |
+| 免责 | 软件按「现状」提供，不含任何明示或默示担保 |
+
+**联系邮箱**：ws3101001@126.com（古籍校勘、规则争议、授权与合作事宜）
 
 欢迎提交 Issue 与 PR，尤其是**排盘规则的古籍校勘**（请注明书名、篇目与原文依据）。本项目定位为传统术数文化研习工具，请勿用于商业占卜宣传或封建迷信活动。
