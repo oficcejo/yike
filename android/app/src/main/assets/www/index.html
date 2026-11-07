@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f6f7f9">
+<title>易课 · 六爻与大六壬</title>
+<link rel="stylesheet" href="css/app.css">
+<!-- 变量展开版：Android 6 等不支持 CSS Variables 的 WebView 靠它保持配色 -->
+<link rel="stylesheet" href="css/app-compat.css">
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand"><span class="logo">易</span><div><h1>易课</h1><p>六爻纳甲 · 大六壬 · 经典义理</p></div></div>
+    <span class="badge" id="apiBadge">离线</span>
+  </header>
+
+  <main id="main">
+    <!-- ============ 起课 ============ -->
+    <section class="view" id="view-start">
+      <div class="segment" id="modeSeg">
+        <button class="active" data-mode="liuyao">六爻纳甲</button>
+        <button data-mode="liuren">大六壬</button>
+      </div>
+
+      <div class="card">
+        <div class="field"><label>占题</label><select id="zhanti"></select></div>
+        <p class="hint" id="ztNote"></p>
+        <div class="field"><label>所问事由 <span class="opt">选填</span></label><textarea id="note" rows="2" placeholder="如：本月能否签下这单？何时有消息？"></textarea></div>
+        <div class="field"><label>起课时间</label><div class="row"><input type="datetime-local" id="dt" step="60"><button class="mini" id="nowBtn">此刻</button></div></div>
+        <div class="field" id="genderRow" hidden><label>占者</label><div class="segment small" id="genderSeg"><button class="active" data-v="male">男占</button><button data-v="female">女占</button></div></div>
+      </div>
+
+      <div class="card" id="liuyaoCard">
+        <div class="card-head"><h2>起卦 · 铜钱六掷</h2><span class="tag" id="guaTag">尚未起卦</span></div>
+        <div class="btnrow">
+          <button class="primary" id="rollBtn">一键摇卦</button>
+          <button class="ghost" id="clearBtn">清空</button>
+        </div>
+        <p class="hint">三枚铜钱六掷成卦：少阳7、少阴8、老阳9、老阴6；老阴老阳为动爻。点击任一爻可切换该爻动／静。</p>
+        <div id="sixLines" class="sixlines"></div>
+        <details class="fold">
+          <summary>指定卦例（复盘《增删卜易》《卜筮正宗》案例）</summary>
+          <div class="field"><label>本卦</label><select id="guaSelect"></select></div>
+          <p class="hint">选定本卦后，再点击上方爻行勾选动爻即可。</p>
+        </details>
+      </div>
+
+      <div class="card" id="liurenCard" hidden>
+        <div class="card-head"><h2>起课 · 月将加时</h2><span class="tag" id="jiangTag"></span></div>
+        <div class="kv-grid">
+          <div class="kv"><span>月将</span><b id="jiangPreview">—</b></div>
+          <div class="kv"><span>占时</span><b id="shiPreview">—</b></div>
+          <div class="kv"><span>昼夜</span><b id="dayNightPreview">—</b></div>
+          <div class="kv"><span>旬空</span><b id="kongPreview">—</b></div>
+        </div>
+        <div class="field"><label>本命地支 <span class="opt">选填</span></label><select id="nianming"></select></div>
+        <div class="field"><label>行年地支 <span class="opt">选填</span></label><select id="xingnian"></select></div>
+        <div class="field"><label>活时 <span class="opt">选填，默认正时</span></label><select id="huoshi"></select></div>
+        <p class="hint">《御定六壬直指·起例》：月将以中气太阳过宫，加于占时起天盘；《六壬断案》重本命、行年与类神。</p>
+      </div>
+
+      <button class="primary block" id="startBtn">起课排盘</button>
+      <div class="history-mini"><div class="card-head"><h2>最近课例</h2><button class="link" id="clearHistory">清空</button></div><div id="historyMini"></div></div>
+    </section>
+
+    <!-- ============ 盘面 ============ -->
+    <section class="view" id="view-pan" hidden>
+      <div class="card-head outside"><h2 id="panTitle">排盘</h2><button class="ghost" id="copyPan">复制盘面</button></div>
+      <div id="panBody"><div class="empty">尚未起课。请先在「起课」页排盘。</div></div>
+      <div class="card" id="panFacts"></div>
+      <div class="card" id="panEvidence"></div>
+    </section>
+
+    <!-- ============ 解读 ============ -->
+    <section class="view" id="view-read" hidden>
+      <div class="card-head outside"><h2>经典义理解读</h2><span class="tag" id="readState">未生成</span></div>
+      <div class="btnrow">
+        <button class="primary" id="aiBtn">AI 解读</button>
+        <button class="ghost" id="localBtn">本地规则</button>
+        <button class="ghost" id="stopBtn" hidden>停止</button>
+      </div>
+      <div class="card read-card"><div id="readBody" class="md"><div class="empty">起课后点「AI 解读」，将按《增删卜易》《卜筮正宗》《大六壬指南》《御定六壬直指》《六壬断案》义理生成断语。</div></div></div>
+      <div class="askbar"><input id="askInput" placeholder="继续追问，如：应期能否再具体些？"><button class="primary" id="askBtn">追问</button></div>
+      <div class="btnrow"><button class="ghost" id="copyRead">复制断语</button><button class="ghost" id="shareRead">分享</button></div>
+    </section>
+
+    <!-- ============ 经典 ============ -->
+    <section class="view" id="view-classic" hidden>
+      <div class="card-head outside"><h2>经典条文</h2><span class="tag" id="classicCount"></span></div>
+      <div class="chips" id="classicChips"></div>
+      <div id="classicList"></div>
+    </section>
+
+    <!-- ============ 设置 ============ -->
+    <section class="view" id="view-setting" hidden>
+      <div class="card">
+        <div class="card-head"><h2>大模型接口</h2><span class="tag">OpenAI 兼容</span></div>
+        <div class="field"><label>服务商预设</label><select id="cfgPreset"></select></div>
+        <p class="hint" id="presetTip"></p>
+        <div class="field"><label>接口地址 Base URL</label><input id="cfgBase" placeholder="https://api.deepseek.com/v1"></div>
+        <div class="field"><label>API Key</label><input id="cfgKey" type="password" placeholder="仅保存在本机"></div>
+        <div class="field"><label>模型名称</label><input id="cfgModel" placeholder="deepseek-chat"></div>
+        <div class="field"><label>生成参数（温度 / Token 上限）</label><div class="row"><input id="cfgTemp" type="number" step="0.1" min="0" max="1.5" placeholder="温度 0.6"><input id="cfgMax" type="number" step="256" min="256" max="32768" placeholder="默认 4096"></div></div>
+        <p class="hint">七段式断语约需 2500–4000 tokens，2048 通常会被截断。多数中转／自托管服务里<b>思维链与正文共用上限</b>（DeepSeek 官方 reasoner 的 CoT 另计），推理模型建议 8192–16384。若结尾出现「输出被截断」提示，请调高此值；盘面 JSON 只占输入额度。</p>
+        <div class="field"><label>Token 参数名</label><select id="cfgTokenParam">
+          <option value="auto">自动识别（推荐）</option>
+          <option value="max_tokens">max_tokens（DeepSeek / 混元 / 通义 / 豆包 / 智谱 / 中转）</option>
+          <option value="max_completion_tokens">max_completion_tokens（OpenAI o 系列 / GPT-5）</option>
+        </select></div>
+        <label class="switch"><input type="checkbox" id="cfgReasoning"><span>推理模型（思维链单独展示，不混入断语）</span></label>
+        <label class="switch"><input type="checkbox" id="cfgStream" checked><span>流式输出</span></label>
+        <div class="btnrow"><button class="primary" id="saveCfg">保存配置</button><button class="ghost" id="testCfg">测试连接</button></div>
+        <p class="hint" id="testResult"></p>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h2>历法与起例</h2></div>
+        <div class="field"><label>当地经度（东经）</label><input id="cfgLon" type="number" step="0.01" value="120"></div>
+        <label class="switch"><input type="checkbox" id="cfgTST"><span>启用真太阳时（按时辰与换日修正）</span></label>
+        <label class="switch"><input type="checkbox" id="cfgLateZi" checked><span>晚子时（23:00 起）日干支归次日</span></label>
+        <div class="field"><label>天乙贵人起例</label><select id="cfgGuiren"><option value="tongxing">通行：甲戊庚牛羊 · 六辛逢马虎</option><option value="gufa">古法：甲羊戊庚牛（阳贵歌）</option></select></div>
+        <p class="hint">节气、月建、月将、干支均由内置 1890–2070 精确节气表推算，不依赖网络；真太阳时只用于定时辰与换日，节气比较仍用历书北京时间。</p>
+        <button class="ghost block" id="savePrefs">保存历法设置</button>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h2>依据与说明</h2></div>
+        <p class="about"><b>六爻</b>：《增删卜易》（野鹤老人）用神两现、伏神、独发独静、应期；《卜筮正宗》（王洪绪）黄金策·总断千金赋、十八问答、八宫纳甲。</p>
+        <p class="about"><b>大六壬</b>：《六壬断案》（邵彦和）类神与年命；《大六壬指南》（陈公献）课体与毕法；《御定六壬直指》卷上起例、卷下分类杂占与毕法赋；九宗门口诀。</p>
+        <p class="about"><b>排盘</b>：本地精算（干支、节气、月将、纳甲、四课三传、天将），LLM 仅依盘面作义理解读，不参与计算。</p>
+        <div class="disclaimer">本应用为传统术数文化研习工具，所有内容不构成事实断言、医疗／法律／投资建议或决策保证。请以理性态度看待，重要事项请咨询专业人士。</div>
+        <p class="hint">易课 v1.0 · 纯离线排盘 + 可选 LLM 解读</p>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabbar" id="tabbar">
+    <button class="active" data-view="start"><i>☰</i><span>起课</span></button>
+    <button data-view="pan"><i>▦</i><span>盘面</span></button>
+    <button data-view="read"><i>✦</i><span>解读</span></button>
+    <button data-view="classic"><i>書</i><span>经典</span></button>
+    <button data-view="setting"><i>⚙</i><span>设置</span></button>
+  </nav>
+  <div id="toast" class="toast"></div>
+</div>
+
+<script src="js/polyfill.js"></script>
+<script src="js/jieqi_data.js"></script>
+<script src="js/calendar.js"></script>
+<script src="js/data.js"></script>
+<script src="js/classics.js"></script>
+<script src="js/liuyao.js"></script>
+<script src="js/liuren.js"></script>
+<script src="js/llm.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
